@@ -1,6 +1,7 @@
 from __future__ import print_function
+from Crypto.Cipher import AES
 input = raw_input
-import socket, threading, os, datetime, multiprocessing, time, sys, subprocess
+import socket, threading, os, datetime, multiprocessing, time, sys, subprocess, base64
 
 cpus = multiprocessing.cpu_count()
 
@@ -12,7 +13,12 @@ banner = """
            \___/\___,_|_|_|  |_|\_____, |  |_|     |_| |_|    
                                    |___/         
 
-         """            
+         """  
+
+PADDING = '{'
+pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+EncodeAES = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
+DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)          
 
 def long_print(color, *args):
 	global now
@@ -82,8 +88,8 @@ def download_handler(name, sock, addr):
 		print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), str(addr[0]), filename, 'does not exist'))
 	sock.close()
 
-def Main():
-    host = '127.0.0.1'
+def Main(EncodeAES, DecodeAES, pad, PADDING):
+    host = '192.168.1.115'
     port = 554
 
 
@@ -101,7 +107,10 @@ def Main():
 	    if i < 50:
 	    	print ("[\033[1;94m{}\033[00m] \033[1;33m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Open For Connection', i))
 	        c, addr = s.accept()
-	        passwd = c.recv(1024)
+	        key = c.recv(8888)
+	        cipher = AES.new(key)
+	        e_passwd = c.recv(1024)
+	        passwd = DecodeAES(cipher, e_passwd)
 	  
 	        try:
 	           print ("[\033[1;94m{}\033[00m] \033[1;35m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Authenticating With', addr[0]))
@@ -156,7 +165,7 @@ def Main():
     s.close()
 
 if __name__ == '__main__':
-	Main()
+	Main(EncodeAES, DecodeAES, pad, PADDING)
 	"""
 	jobs = []
 	for i in range (cpus):

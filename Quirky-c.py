@@ -1,6 +1,7 @@
 from __future__ import print_function
+from Crypto.Cipher import AES
 input = raw_input
-import socket, sys, getpass, pwd, os, stat, time
+import socket, sys, getpass, pwd, os, stat, time, base64
 
 try:
 	host = sys.argv[1]
@@ -20,13 +21,22 @@ print("[\033[1;94m+\033[00m] Opening Socket")
 
 try:
    s.connect((host, port))
+   BLOCK_SIZE = 16
+   key = os.urandom(BLOCK_SIZE)
+
+   PADDING = '{'
+   pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+   cipher = AES.new(key)
+   EncodeAES = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
+   DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
 except socket.error:
    print("[\033[1;31m!\033[00m] Connection was Refused... is the server running?")
    exit()
 
-passwd = getpass.getpass("[\033[1;94m+\033[00m] Password: ")
-s.send(passwd)
-
+s.send(key)
+i_passwd = getpass.getpass("[\033[1;94m+\033[00m] Password: ")
+e_passwd = EncodeAES(cipher, i_passwd)
+s.send(e_passwd)
 time.sleep(1)
 
 if mode == '--download':
