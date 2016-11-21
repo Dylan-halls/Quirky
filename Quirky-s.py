@@ -40,7 +40,7 @@ try:
 		global now
 		now = datetime.datetime.now()
 		cmd = 's'
-		print ("[\033[1;94m{}\033[00m] \033[0;33m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"),'Serving Limited Shell To', str(addr[0])))
+		print ("[\033[1;94m{}\033[00m] \033[0;33m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"),'Serving Limited Shell To', socket.gethostbyaddr(addr[0])[0]))
 		while len(cmd) > 0:
 			cmd = sock.recv(9999)
 			#[word for word in wordlist if any(letter in word for letter in 'aqk')]
@@ -49,44 +49,44 @@ try:
 				
 				if ';' in cmd:
 					sock.send("Must Stay in this Directory!")
-					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', addr[0].strip(), '->', cmd))
+					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', socket.gethostbyaddr(addr[0])[0].strip(), '->', cmd))
 				
 				elif ':' in cmd:
 					sock.send("Must Stay in this Directory!")
-					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', addr[0].strip(),'->', cmd))
+					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', socket.gethostbyaddr(addr[0])[0].strip(),'->', cmd))
 
 				elif '|' in cmd:
 					sock.send("Must Stay in this Directory!")
-					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', addr[0].strip(), '->', cmd))
+					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', socket.gethostbyaddr(addr[0])[0].strip(), '->', cmd))
 
 				elif '&' in cmd:
 					sock.send("Must Stay in this Directory!")
-					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', addr[0].strip(), '->', cmd))
+					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Detected Malicous Command From', socket.gethostbyaddr(addr[0])[0].strip(), '->', cmd))
 
 				elif 'wget' in cmd:
 					sock.send("At least have the decenty to use Quirky in a Quirky Shell!")
-					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Aha', addr[0].strip(), 'tryed to use wget'))
+					print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Aha', socket.gethostbyaddr(addr[0])[0], 'tryed to use wget'))
 
 				else:
 					she = cfg.get('Shell_Handler', 'shell')
 					scmd = [she,'-c', cmd]
 					rcmd = subprocess.Popen(scmd, stdout=subprocess.PIPE)
 					sock.send(rcmd.communicate()[0])
-					print ("[\033[1;94m{}\033[00m] \033[0;33m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), str(addr[0]), 'Called:', cmd))
+					print ("[\033[1;94m{}\033[00m] \033[0;33m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), socket.gethostbyaddr(addr[0])[0], 'Called:', cmd))
 
 			else:
 				she = cfg.get('Shell_Handler', 'shell')
 				scmd = [she,'-c', cmd]
 				rcmd = subprocess.Popen(scmd, stdout=subprocess.PIPE)
 				sock.send(rcmd.communicate()[0])
-				print ("[\033[1;94m{}\033[00m] \033[0;33m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), str(addr[0]), 'Called:', cmd))
+				print ("[\033[1;94m{}\033[00m] \033[0;33m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), socket.gethostbyaddr(addr[0])[0], 'Called:', cmd))
 			
 	def upload_handler(name, sock, addr):
 	   global now
 	   now = datetime.datetime.now()
 	   filename = sock.recv(1024)
 	   filesize = sock.recv(1024)
-	   print ("[\033[1;94m{}\033[00m] \033[0;33m{}\033[00m \033[1;32m{} {} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"),'PUT', filename, filesize, 'Bytes',  'from', str(addr[0])))
+	   print ("[\033[1;94m{}\033[00m] \033[0;33m{}\033[00m \033[1;32m{} {} {} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"),'PUT', filename, filesize, 'Bytes',  'from', socket.gethostbyaddr(addr[0])[0]))
 	   f = open(filename, 'wb')
 	   data = sock.recv(1024)
 	   totalrecv = len(data)
@@ -106,10 +106,10 @@ try:
 			filename = sock.recv(1024)
 			if os.path.isfile(filename):
 				sock.send("EXISTS " + str(os.path.getsize(filename)))
-				print ("[\033[1;94m{}\033[00m] \033[1;32m{} {}\033[00m\033[0;33m {}\033[00m \033[1;32m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), str(addr[0]), filename, 'EXISTS', 'and is', str(os.path.getsize(filename)), 'Bytes'))
+				print ("[\033[1;94m{}\033[00m] \033[1;32m{} {}\033[00m\033[0;33m {}\033[00m \033[1;32m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), socket.gethostbyaddr(addr[0])[0], filename, 'EXISTS', 'and is', str(os.path.getsize(filename)), 'Bytes'))
 				userResponse = sock.recv(1024)
 				if userResponse[:2] == 'OK':
-					print ("[\033[1;94m{}\033[00m] \033[0;33m{}\033[00m \033[1;32m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"),'GET', filename, 'for', str(addr[0])))
+					print ("[\033[1;94m{}\033[00m] \033[0;33m{}\033[00m \033[1;32m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"),'GET', filename, 'for', socket.gethostbyaddr(addr[0])[0]))
 					with open(filename, 'rb') as f:
 						bytesToSend = f.read(1024)
 						sock.send(bytesToSend)
@@ -120,7 +120,7 @@ try:
 			pass
 		else:
 			sock.send("ERR ")
-			print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), str(addr[0]), filename, 'does not exist'))
+			print ("[\033[1;94m{}\033[00m] \033[1;31m{} {} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), socket.gethostbyaddr(addr[0])[0], filename, 'does not exist'))
 		sock.close()
 
 	def Main(EncodeAES, DecodeAES, pad, PADDING):
@@ -156,19 +156,19 @@ try:
 		        passwd = DecodeAES(cipher, e_passwd)
 		  
 		        try:
-		           print ("[\033[1;94m{}\033[00m] \033[1;35m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Authenticating With', addr[0]))
+		           print ("[\033[1;94m{}\033[00m] \033[1;35m{} {} ({})\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Authenticating With', socket.gethostbyaddr(addr[0])[0], addr[0]))
 		           if passwd == 'pass':
 		           	  pass
 		              
 		           else:
 		           	  c.close()
-		           	  print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), str(addr[0]), ' Failed Authentication'))
-		           	  print ("[\033[1;94m{}\033[00m] \033[1;31m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Shutting Down', str(addr[0])))
+		           	  print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), socket.gethostbyaddr(addr[0])[0], ' Failed Authentication'))
+		           	  print ("[\033[1;94m{}\033[00m] \033[1;31m{} {}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Shutting Down', socket.gethostbyaddr(addr[0])[0]))
 		           	  c.close()
 
 		           print ("[\033[1;94m{}\033[00m] \033[1;32m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Got Connection from: ', socket.gethostbyaddr(str(addr)[0])))
 		        except socket.gaierror:
-		           print ("[\033[1;94m{}\033[00m] \033[1;32m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Got Connection from: ', str(addr[0])))
+		           print ("[\033[1;94m{}\033[00m] \033[1;32m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Got Connection from: ', socket.gethostbyaddr(addr[0])[0]))
 		        
 		        try:
 			        mode = c.recv(1024)
